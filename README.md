@@ -1,6 +1,6 @@
 #  Market Microstructure Alpha Engine
 
-[![Open in Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)](PASTE_YOUR_KAGGLE_NOTEBOOK_LINK_HERE)
+[![Open in Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)](https://www.kaggle.com/code/gaurav11062002/market-microstructure-alpha-engine)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-red)
 ![Status](https://img.shields.io/badge/Status-Hireable-success)
