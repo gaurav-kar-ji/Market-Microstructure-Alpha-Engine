@@ -1,9 +1,10 @@
 #  Market Microstructure Alpha Engine
 
+[![Open in Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)](PASTE_YOUR_KAGGLE_NOTEBOOK_LINK_HERE)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-red)
 ![Status](https://img.shields.io/badge/Status-Hireable-success)
-![Sharpe Ratio](https://img.shields.io/badge/Sharpe-4.14-green)
+![Sharpe Ratio](https://img.shields.io/badge/Sharpe-4.38-green)
 
 > **A high-frequency alpha generator that solves the "Mid-Price Illusion" by training Deep Learning models on effective PnL net of bid-ask spreads.**
 
@@ -16,19 +17,19 @@ Most academic trading projects fail in the real world because they predict the *
 This project implements a **Spread-Aware Deep Learning** strategy using the **DeepLOB** architecture. It treats trading as a high-precision classification problem, utilizing **Focal Loss** to handle class imbalance and a **High-Confidence Threshold ("Sniper" Execution)** to filter out noise.
 
 **Key Performance Metrics:**
-* **Sharpe Ratio:** **4.14** (Net of Spread + 0.1bps Fees)
-* **Win Rate:** High precision execution via 60% confidence thresholding.
-* **Activity:** Trades on only **~6.4%** of market ticks (low turnover, high conviction).
+* **Sharpe Ratio:** **4.38** (Net of Spread + 0.1bps Fees)
+* **Win Rate:** **67.12%** precision via 55% confidence thresholding.
+* **Activity:** Selective trading on high-probability opportunities to minimize transaction costs.
 
 ---
 
 ##  Core Innovations
 
 ### 1. The "Realism" Layer: Spread-Aware Labeling
-Instead of standard returns `(Price_t+k - Price_t) / Price_t`, we generate labels based on **executable liquidity**:
-* **LONG (Class 2):** `Future_Bid > Current_Ask` (Profitable after buying at Ask and selling at Bid).
-* **SHORT (Class 0):** `Future_Ask < Current_Bid` (Profitable after selling at Bid and buying at Ask).
-* **STABLE (Class 1):** All price moves smaller than the spread.
+Instead of standard returns `(Price_t+k - Price_t) / Price_t`, we generate labels based on **executable liquidity** with a profit buffer:
+* **LONG (Class 2):** `Future_Bid > Current_Ask + Buffer` (Profitable after spread & fees).
+* **SHORT (Class 0):** `Future_Ask < Current_Bid - Buffer`.
+* **STABLE (Class 1):** All price moves smaller than the spread + buffer.
 
 ### 2. DeepLOB Architecture (CNN-LSTM)
 We utilize the state-of-the-art **DeepLOB** (Zhang et al., 2019) model adapted for 4-channel tensors:
@@ -41,20 +42,20 @@ Market data is 90%+ "Stable." Standard Cross-Entropy loss fails here. We impleme
 * **Class Weighting:** Inverse frequency weighting to penalize missed trade opportunities.
 
 ### 4. "Sniper" Execution Logic
-We do not trade on every signal. The engine uses a **Confidence Threshold (60%)**:
-* If `Model_Prob(Up) < 0.60`: **Stay Cash (Position 0)**.
-* This filters out low-conviction "machine gun" trading, drastically improving the Sharpe Ratio by reducing transaction costs.
+We do not trade on every signal. The engine uses a **Dynamic Confidence Threshold**:
+* By analyzing probability calibration, we identified **0.55** as the optimal threshold for this regime.
+* This filters out low-conviction trades, significantly boosting the Win Rate and Sharpe Ratio.
 
 ---
 
 ##  Installation & Usage
 
-### Option 1: Run in Cloud (Recommended)
-You can run the full training and backtest pipeline directly in your browser via Kaggle:
+###  Run in Cloud (Recommended)
+You can run the full training, hyperparameter optimization, and backtest pipeline directly in your browser via Kaggle:
 
-[![Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)](https://www.kaggle.com/code/gaurav11062002/market-microstructure-alpha-engine)
+[![Open in Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)](https://www.kaggle.com/code/gaurav11062002/market-microstructure-alpha-engine)
 
-### Option 2: Local Installation
+###  Local Installation
 
 1.  **Clone the Repository**
     ```bash
@@ -72,31 +73,31 @@ You can run the full training and backtest pipeline directly in your browser via
     * Ensure `FI2010_train.csv` and `FI2010_test.csv` are in the `/data` or `/input` directory.
 
 4.  **Run the Alpha Engine**
-    Open the Jupyter Notebook:
     ```bash
     jupyter notebook market-microstructure-alpha-engine.ipynb
     ```
 
 ---
 
-## 📊 Results
+##  Results
 
 ### Equity Curve (Net of Costs)
-*The strategy generates a consistent upward drift, demonstrating structural alpha rather than random noise fitting.*
+*The strategy generates a consistent upward drift, demonstrating structural alpha. The "Sniper" logic avoids drawdowns during choppy markets and capitalizes heavily on high-volatility events.*
 
 ![Equity Curve](equity_curve.png)
 
 ### Metrics Table
 | Metric | Value | Notes |
 | :--- | :--- | :--- |
+| **Sharpe Ratio** | **4.38** | Institutional-grade risk-adjusted return. |
+| **Win Rate** | **67.12%** | High precision achieved via confidence thresholding. |
+| **Macro F1-Score** | 0.54 | Significantly outperforms random baseline (0.33). |
 | **Prediction Horizon** | 500 Ticks | Allows price discovery to exceed spread costs. |
 | **Transaction Cost** | Spread + 0.1bps | Realistic exchange fee simulation. |
-| **Macro F1-Score** | 0.54 | Significantly outperforms random baseline (0.33). |
-| **Sharpe Ratio** | **4.14** | Institutional-grade risk-adjusted return. |
 
 ---
 
-## 📂 Project Structure
+##  Project Structure
 
 ```text
 .
@@ -104,9 +105,10 @@ You can run the full training and backtest pipeline directly in your browser via
 ├── equity_curve.png                          # Performance visualization
 ├── README.md                                 # Project Documentation
 └── data/                                     # Directory for LOB csv files
+
+
 ```
 ---
-
 ##  References
 
 1.  **DeepLOB:** Zhang, Z., Zohren, S., & Roberts, S. (2019). *DeepLOB: Deep Convolutional Neural Networks for Limit Order Books.* IEEE Transactions on Singular Processing.
