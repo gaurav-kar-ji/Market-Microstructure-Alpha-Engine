@@ -59,7 +59,7 @@ You can run the full training, hyperparameter optimization, and backtest pipelin
 
 1.  **Clone the Repository**
     ```bash
-    git clone [https://github.com/yourusername/market-microstructure-alpha-engine.git](https://github.com/yourusername/market-microstructure-alpha-engine.git)
+    git clone [https://github.com/gaurav-kar-ji/market-microstructure-alpha-engine.git](https://github.com/gaurav-kar-ji/market-microstructure-alpha-engine.git)
     cd market-microstructure-alpha-engine
     ```
 
@@ -101,10 +101,10 @@ You can run the full training, hyperparameter optimization, and backtest pipelin
 
 ```text
 .
-├── market-microstructure-alpha-engine.ipynb  # Main Logic (Data -> Model -> Backtest)
+├── market-microstructure-alpha-engine.ipynb  # Main Logic (Data -> Model -> Backtest)(see kaggle notebook for more clarity)
 ├── equity_curve.png                          # Performance visualization
 ├── README.md                                 # Project Documentation
-└── data/                                     # Directory for LOB csv files
+└── data/                                     # Directory for LOB csv files(input section of kaggle notebook)
 
 
 ```
